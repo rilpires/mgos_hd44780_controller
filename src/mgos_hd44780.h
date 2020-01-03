@@ -7,6 +7,7 @@ extern "C" {
 
 #include "mgos.h"
 #include "mgos_gpio.h"
+#include "mgos_config.h"
 
 typedef enum {
     LCD_DIRECTION_DECREMENT = 0,
@@ -35,7 +36,6 @@ typedef enum {
 void lcd_half_instruction( int register_select, int bit3_msb , int bit2 , int bit1 , int bit0_lsb );
 void lcd_execute_instruction( int register_select, char c );
 
-void lcd_init();
 void lcd_clear_display();
 void lcd_cursor_home();
 void lcd_display_controls( LCD_DISPLAY display , LCD_CURSOR cursor , LCD_BLINK blink );

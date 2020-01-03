@@ -1,55 +1,19 @@
 #include "mgos_hd44780.h"
 
-enum HD44780_PIN {
-  HD44780_PIN_RS = 2,
-  HD44780_PIN_E  = 4,
-  HD44780_PIN_D4 = 15,
-  HD44780_PIN_D5 = 13,
-  HD44780_PIN_D6 = 12,
-  HD44780_PIN_D7 = 14,
-};
-
-
 bool mgos_hd44780_init(void){
-    return true;
-}
-
-
-void lcd_half_instruction( int register_select, int data_bit3_msb, int data_bit2, int data_bit1, int data_bit0_lsb ){
-  mgos_usleep(5000);
-  register_select = (register_select>=1);
-  data_bit3_msb = (data_bit3_msb>=1);
-  data_bit2 = (data_bit2>=1);
-  data_bit1 = (data_bit1>=1);
-  data_bit0_lsb = (data_bit0_lsb>=1);
-  mgos_gpio_write( HD44780_PIN_E , 1 );
-  mgos_gpio_write( HD44780_PIN_RS , register_select );
-  mgos_gpio_write( HD44780_PIN_D7 , data_bit3_msb );
-  mgos_gpio_write( HD44780_PIN_D6 , data_bit2 );
-  mgos_gpio_write( HD44780_PIN_D5 , data_bit1 );
-  mgos_gpio_write( HD44780_PIN_D4 , data_bit0_lsb );
-  mgos_usleep(5000);
-  mgos_gpio_write( HD44780_PIN_E , 0 );
-}
-
-void lcd_init(){
     mgos_msleep( 50 );
-    mgos_gpio_set_mode( HD44780_PIN_RS , MGOS_GPIO_MODE_OUTPUT );
-    mgos_gpio_set_mode( HD44780_PIN_E ,  MGOS_GPIO_MODE_OUTPUT );
-    mgos_gpio_set_mode( HD44780_PIN_D4 , MGOS_GPIO_MODE_OUTPUT );
-    mgos_gpio_set_mode( HD44780_PIN_D5 , MGOS_GPIO_MODE_OUTPUT );
-    mgos_gpio_set_mode( HD44780_PIN_D6 , MGOS_GPIO_MODE_OUTPUT );
-    mgos_gpio_set_mode( HD44780_PIN_D7 , MGOS_GPIO_MODE_OUTPUT );
-
-    mgos_msleep( 50 );
+    mgos_gpio_set_mode( mgos_sys_config_get_HD44780_GPIO_RS() , MGOS_GPIO_MODE_OUTPUT );
+    mgos_gpio_set_mode( mgos_sys_config_get_HD44780_GPIO_E() ,  MGOS_GPIO_MODE_OUTPUT );
+    mgos_gpio_set_mode( mgos_sys_config_get_HD44780_GPIO_D4() , MGOS_GPIO_MODE_OUTPUT );
+    mgos_gpio_set_mode( mgos_sys_config_get_HD44780_GPIO_D5() , MGOS_GPIO_MODE_OUTPUT );
+    mgos_gpio_set_mode( mgos_sys_config_get_HD44780_GPIO_D6() , MGOS_GPIO_MODE_OUTPUT );
+    mgos_gpio_set_mode( mgos_sys_config_get_HD44780_GPIO_D7() , MGOS_GPIO_MODE_OUTPUT );
 
     int NUMBER_OF_LINES = 1;
     int FONT = 0;
 
-    // 1st function set
-    lcd_half_instruction(0,0,0,1,0);
-
-    // 2nd function set
+    mgos_msleep( 50 );
+    lcd_half_instruction(0,0,0,1,0); // <--- Now it's interface is 4bit
     lcd_execute_instruction(0,0b00100000 + (NUMBER_OF_LINES&1)*8 + (FONT&1)*4 );
 
     // Default configurations
@@ -59,7 +23,20 @@ void lcd_init(){
     lcd_clear_display();
     mgos_msleep(50);
 
-    LOG( LL_INFO, ("lcd_init done") );
+    LOG( LL_INFO, ("mgos_hd44780_init done") );
+    return true;
+}
+
+void lcd_half_instruction( int register_select, int data_bit3_msb, int data_bit2, int data_bit1, int data_bit0_lsb ){
+  mgos_usleep(500);
+  mgos_gpio_write( mgos_sys_config_get_HD44780_GPIO_E() , 1 );
+  mgos_gpio_write( mgos_sys_config_get_HD44780_GPIO_RS() , register_select>=1 );
+  mgos_gpio_write( mgos_sys_config_get_HD44780_GPIO_D7() , data_bit3_msb>=1 );
+  mgos_gpio_write( mgos_sys_config_get_HD44780_GPIO_D6() , data_bit2>=1 );
+  mgos_gpio_write( mgos_sys_config_get_HD44780_GPIO_D5() , data_bit1>=1 );
+  mgos_gpio_write( mgos_sys_config_get_HD44780_GPIO_D4() , data_bit0_lsb>=1 );
+  mgos_usleep(500);
+  mgos_gpio_write( mgos_sys_config_get_HD44780_GPIO_E() , 0 );
 }
 
 void lcd_execute_instruction( int register_select, char c ){
@@ -69,11 +46,11 @@ void lcd_execute_instruction( int register_select, char c ){
 
 void lcd_clear_display(){
     lcd_execute_instruction(0, 0b00000001 );
-    mgos_msleep(50);
+    mgos_msleep(5);
 }
 void lcd_cursor_home(){
     lcd_execute_instruction(0, 0b00000010 );
-    mgos_msleep(50);
+    mgos_msleep(5);
 }
 
 void lcd_display_controls( LCD_DISPLAY display , LCD_CURSOR cursor , LCD_BLINK blink ){
