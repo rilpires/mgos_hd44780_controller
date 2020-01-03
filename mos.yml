@@ -1,0 +1,26 @@
+name: hd44780
+author: Romeu I. L. Pires <rilpires@gmail.com>
+type: lib
+description: A HD44780 interface library that should work without the commonly I2C attached module.
+version: 1.0
+
+
+sources:
+  - src
+
+config_schema:
+  - ["HD44780_GPIO" , "o" , {"title": "ESP8266 GPIO pins used in HD44780's pins"}]
+  - ["HD44780_GPIO.D7" , "i"  , {"title": "ESP8266's GPIO pin used in HD44780's D7 pin"}]
+  - ["HD44780_GPIO.D6" , "i"  , {"title": "ESP8266's GPIO pin used in HD44780's D6 pin"}]
+  - ["HD44780_GPIO.D5" , "i"  , {"title": "ESP8266's GPIO pin used in HD44780's D5 pin"}]
+  - ["HD44780_GPIO.D4" , "i"  , {"title": "ESP8266's GPIO pin used in HD44780's D4 pin"}]
+  - ["HD44780_GPIO.E" , "i"  , {"title": "ESP8266's GPIO pin used in HD44780's E pin"}]
+  - ["HD44780_GPIO.RS" , "i"  , {"title": "ESP8266's GPIO pin used in HD44780's RS pin"}]
+
+
+tags:
+  - c
+  - hd44780
+  - lcd
+
+manifest_version: 2017-05-18
