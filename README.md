@@ -1,5 +1,5 @@
 # HD44780 library for Mongoose OS
-A library used to control a HD44780 LCD display in a MongooseOS project, without an I2C module that is commonly attached to the LDC.
+A library used to control a HD44780 LCD display in a MongooseOS project, without an I2C module that is commonly attached to the LCD.
 It should use 6 GPIO pins in total, that should be mapped in config_schema like this example:
 
 ```yaml
