@@ -36,6 +36,8 @@ config_schema:
 This is a simple C program example using a 4-line model.
 Don't forget to set <code>HD44780.PHYSICAL_NUMBER_OF_LINES"</code> config equal to 4 in this case.
 
+![LCD Example](https://i.ibb.co/StwptSJ/photo-2020-01-04-17-17-16.jpg)
+
 ### main.c
 ```c
 #include "mgos.h"
