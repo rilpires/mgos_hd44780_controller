@@ -1,6 +1,9 @@
 #include "mgos_hd44780.h"
 
 bool mgos_hd44780_init(void){
+    const int NUMBER_OF_LINES = 1; 
+    const int FONT = 0;
+
     mgos_msleep( 50 );
     mgos_gpio_set_mode( mgos_sys_config_get_HD44780_GPIO_RS() , MGOS_GPIO_MODE_OUTPUT );
     mgos_gpio_set_mode( mgos_sys_config_get_HD44780_GPIO_E() ,  MGOS_GPIO_MODE_OUTPUT );
@@ -8,10 +11,6 @@ bool mgos_hd44780_init(void){
     mgos_gpio_set_mode( mgos_sys_config_get_HD44780_GPIO_D5() , MGOS_GPIO_MODE_OUTPUT );
     mgos_gpio_set_mode( mgos_sys_config_get_HD44780_GPIO_D6() , MGOS_GPIO_MODE_OUTPUT );
     mgos_gpio_set_mode( mgos_sys_config_get_HD44780_GPIO_D7() , MGOS_GPIO_MODE_OUTPUT );
-
-    int NUMBER_OF_LINES = 1;
-    int FONT = 0;
-
     mgos_msleep( 50 );
     lcd_half_instruction(0,0,0,1,0); // <--- Now it's interface is 4bit
     lcd_execute_instruction(0,0b00100000 + (NUMBER_OF_LINES&1)*8 + (FONT&1)*4 );
@@ -66,26 +65,28 @@ void lcd_write( const char* text ){
 }
 
 
-int DISPLAY_HEIGHT = 4;
-int get_line_address( int line_number ){
-    if( DISPLAY_HEIGHT == 2 ){
-        switch(line_number){
-            case 0: return 0;
-            case 1: return 40;
-        }
+void lcd_move_cursor( int x , int y ){
+    int line_address = 0;
+    int physical_number_of_lines = mgos_sys_config_get_HD44780_PHYSICAL_NUMBER_OF_LINES();
+    y = y % physical_number_of_lines;
+    if( physical_number_of_lines == 2 ){
+        if( y == 0 )    line_address = 0;
+        else            line_address = 64;
     }
-    else if( DISPLAY_HEIGHT == 4 ){
-        switch(line_number){
-            case 0: return 0;
-            case 1: return 128;
-            case 2: return 40;
-            default: return 168;
-        }
+    else if( physical_number_of_lines == 4 ){
+        if( y == 0 )    line_address = 0;
+        else if (y==1)  line_address = 64;
+        else if (y==2)  line_address = 20;
+        else            line_address = 84;
     }
-    return 0;
+    int address = line_address + x;
+    lcd_execute_instruction( 0 , 0b10000000 + address%128 );
 }
 
-void lcd_move_cursor( int x , int y ){
-    int address = get_line_address(y) + x;
-    lcd_execute_instruction( 0 , 128 + address&127 );
+void lcd_shift_cursor( LCD_SHIFT direction ){
+    lcd_execute_instruction( 0 , 0b00010000 + direction*0b100 );
+}
+
+void lcd_shift_display( LCD_SHIFT direction ){
+    lcd_execute_instruction( 0 , 0b00011000 + direction*0b100 );
 }

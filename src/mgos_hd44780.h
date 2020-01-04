@@ -29,9 +29,11 @@ typedef enum {
     LCD_BLINK_OFF = 0,
     LCD_BLINK_ON = 1
 } LCD_BLINK;
+typedef enum {
+    LCD_SHIFT_LEFT = 0,
+    LCD_SHIFT_RIGHT = 1
+} LCD_SHIFT;
 
-#define LCD_SHIFT_LEFT 0
-#define LCD_SHIFT_RIGHT 1
 
 void lcd_half_instruction( int register_select, int bit3_msb , int bit2 , int bit1 , int bit0_lsb );
 void lcd_execute_instruction( int register_select, char c );
@@ -42,6 +44,8 @@ void lcd_display_controls( LCD_DISPLAY display , LCD_CURSOR cursor , LCD_BLINK b
 void lcd_entry_mode_set( LCD_DIRECTION dir , LCD_DISPLAY_SHIFT displ );
 void lcd_write( const char* text );
 void lcd_move_cursor( int x , int y );
+void lcd_shift_cursor( LCD_SHIFT direction );
+void lcd_shift_display( LCD_SHIFT direction );
 
 #ifdef __cplusplus
 }
