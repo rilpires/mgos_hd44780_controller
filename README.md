@@ -85,7 +85,13 @@ manifest_version: 2017-05-18
 ```
 
 ## Notes
+Don't forget to add:
+``` yaml
+  name: hd44780
+```
+in libs section.
+
 There is some functionalities yet to implement:
 - Set the number of lines used to half of the available lines. I don't think this is useful at all but it is necessary in order to use the 5x10 font (it is basically the same font with an underline below it)
-- Implement reading commands from the display. It would be necessary an additional GPIO.
+- Implement reading commands from the display. It would be necessary an additional GPIO pin.
 - Implement creating custom characters.
